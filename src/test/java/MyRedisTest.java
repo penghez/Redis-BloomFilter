@@ -14,7 +14,7 @@ public class MyRedisTest {
 
     @Before
     public void setJedis() {
-        myRedis = new MyRedis("34.74.72.142", 6379);
+        myRedis = new MyRedis("34.74.72.142", 6379, "mypass");
         jedis = myRedis.jedis;
     }
 
@@ -23,34 +23,35 @@ public class MyRedisTest {
      */
     @Test
     public void testString() {
-        //添加数据
-        jedis.set("name", "chx"); //key为name放入value值为chx
-        System.out.println("拼接前:" + jedis.get("name"));//读取key为name的值
+        // 添加数据
+        jedis.set("name", "joe");
+        System.out.println("拼接前:" + jedis.get("name"));
 
-        //向key为name的值后面加上数据 ---拼接
+        // 向key为name的值后面加上数据 ---拼接
         jedis.append("name", " is my name;");
         System.out.println("拼接后:" + jedis.get("name"));
 
-        //删除某个键值对
+        // 删除某个键值对
         jedis.del("name");
         System.out.println("删除后:" + jedis.get("name"));
 
-        //s设置多个键值对
-        jedis.mset("name", "chenhaoxiang", "age", "20", "email", "chxpostbox@outlook.com");
-        jedis.incr("age");//用于将键的整数值递增1。如果键不存在，则在执行操作之前将其设置为0。 如果键包含错误类型的值或包含无法表示为整数的字符串，则会返回错误。此操作限于64位有符号整数。
+        // 设置多个键值对
+        jedis.mset("name", "joe doe", "age", "20", "email", "joe@outlook.com");
+        // 用于将键的整数值递增1。
+        jedis.incr("age");
         System.out.println(jedis.get("name") + " " + jedis.get("age") + " " + jedis.get("email"));
     }
 
     @Test
     public void testMap() {
-        //添加数据
+        // 添加数据
         Map<String, String> map = new HashMap<String, String>();
-        map.put("name", "chx");
+        map.put("name", "joe");
         map.put("age", "100");
-        map.put("email", "***@outlook.com");
+        map.put("email", "joe@outlook.com");
         jedis.hmset("user", map);
-        //取出user中的name，结果是一个泛型的List
-        //第一个参数是存入redis中map对象的key，后面跟的是放入map中的对象的key，后面的key是可变参数
+        // 取出user中的name，结果是一个泛型的List
+        // 第一个参数是存入redis中map对象的key，后面跟的是放入map中的对象的key，后面的key是可变参数
         List<String> list = jedis.hmget("user", "name", "age", "email");
         System.out.println(list);
 
@@ -100,14 +101,14 @@ public class MyRedisTest {
     @Test
     public void testSet(){
         //添加
-        jedis.sadd("user","chenhaoxiang");
-        jedis.sadd("user","hu");
-        jedis.sadd("user","chen");
-        jedis.sadd("user","xiyu");
-        jedis.sadd("user","chx");
-        jedis.sadd("user","are");
+        jedis.sadd("user","joe");
+        jedis.sadd("user","doe");
+        jedis.sadd("user","tom");
+        jedis.sadd("user","sam");
+        jedis.sadd("user","tim");
+        jedis.sadd("user","pat");
         //移除user集合中的元素are
-        jedis.srem("user","are");
+        jedis.srem("user","sam");
         System.out.println("user中的value:"+jedis.smembers("user"));//获取所有加入user的value
         System.out.println("chx是否是user中的元素:"+jedis.sismember("user","chx"));//判断chx是否是user集合中的元素
         System.out.println("集合中的一个随机元素:"+jedis.srandmember("user"));//返回集合中的一个随机元素
