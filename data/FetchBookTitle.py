@@ -11,7 +11,6 @@ def fetchOutBookInfo(input_path, output_path):
             title = row[3].lstrip("\'").lstrip("\"").rstrip("\'").rstrip("\"")
             book_info.append(title)
 
-    print(book_info[:10])
     with open(output_path, 'a+') as file:
         # writer = csv.writer(file)
         # for row in book_info:
