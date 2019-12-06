@@ -45,6 +45,7 @@ public class MyRedisTest {
     @Test
     public void testMap() {
         // 添加数据
+        jedis.flushDB();
         Map<String, String> map = new HashMap<String, String>();
         map.put("name", "joe");
         map.put("age", "100");
