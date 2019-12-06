@@ -5,12 +5,14 @@ import os
 def fetchOutBookInfo(input_path, output_path):
     book_info = []
 
-    with open(input_path) as file:
+    with open(input_path, encoding="ISO-8859-1") as file:
         reader = csv.reader(file)
         for row in reader:
-            book_info.append([row[3], row[4]])
+            title = row[3].lstrip("\'").lstrip("\"").rstrip("\'").rstrip("\"")
+            print(title)
+            book_info.append([title])
 
-    with open(output_path, 'ab+') as file:
+    with open(output_path, 'a+') as file:
         writer = csv.writer(file)
         writer.writerows(book_info)
 
