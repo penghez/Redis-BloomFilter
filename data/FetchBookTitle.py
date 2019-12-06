@@ -9,12 +9,20 @@ def fetchOutBookInfo(input_path, output_path):
         reader = csv.reader(file)
         for row in reader:
             title = row[3].lstrip("\'").lstrip("\"").rstrip("\'").rstrip("\"")
-            print(title)
-            book_info.append([title])
+            book_info.append(title)
 
+    print(book_info[:10])
     with open(output_path, 'a+') as file:
-        writer = csv.writer(file)
-        writer.writerows(book_info)
+        # writer = csv.writer(file)
+        # for row in book_info:
+        #     print(row)
+        #     writer.write(row)
+        for num, row in enumerate(book_info):
+            if num == len(book_info) - 1:
+                file.write(row)
+            else:
+                file.write(row + '\n')
+         
 
 
 if __name__ == "__main__":
