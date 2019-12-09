@@ -14,7 +14,7 @@ public class MyRedisTest {
 
     @Before
     public void setJedis() {
-        myRedis = new MyRedis("34.74.72.142", 6379, "mypass");
+        myRedis = new MyRedis("34.74.169.35", 6379, "mypass");
         jedis = myRedis.jedis;
     }
 
