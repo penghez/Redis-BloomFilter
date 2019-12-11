@@ -17,6 +17,9 @@ package bitset;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.Pipeline;
+
+import java.util.Map;
 
 /**
  * Implement bloom filter on redis bitset.
@@ -71,6 +74,14 @@ public class RedisBitSet implements BaseBitSet {
         }
     }
 
+    public void pset(Map<Integer, Boolean> bitMap) {
+        Pipeline pipeline = this.jedis.pipelined();
+        for (Map.Entry<Integer, Boolean> bitEntry : bitMap.entrySet()) {
+            pipeline.setbit(this.name, bitEntry.getKey(), bitEntry.getValue());
+        }
+        pipeline.sync();
+    }
+
     public boolean get(int bitIndex) {
         if (this.isCluster) {
             return this.jedisCluster.getbit(this.name, bitIndex);
@@ -105,5 +116,13 @@ public class RedisBitSet implements BaseBitSet {
 
     public boolean isEmpty() {
         return size() <= 0;
+    }
+
+    public Jedis getJedis() {
+        return jedis;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -22,7 +22,7 @@ public class MyRedis {
     private void connectRedis() {
         try {
             jedis = new Jedis(host, port);
-            if (auth != null) {
+            if (auth != null || auth.trim().length() != 0) {
                 jedis.auth(auth);
             }
             System.out.println("Connected to the Redis server: " + host + ":" + port + ".");

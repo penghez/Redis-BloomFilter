@@ -16,9 +16,12 @@
 package common;
 
 import bitset.BaseBitSet;
+import bitset.RedisBitSet;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * This program refers to the java-bloomfilter,you can get its details form https://github.com/MagnusS/Java-BloomFilter.
@@ -232,6 +235,24 @@ public class BloomFilter<E> implements Cloneable, Serializable {
         numberOfAddedElements++;
     }
 
+    // Uses pipeline for batch adding element
+    public void addWithPipeline(List<E> elements) {
+        Map<Integer, Boolean> bitMap = new HashMap<Integer, Boolean>();
+        for (E element : elements) {
+            int[] hashes = common.MessageDigestUtils.createHashes(
+                    element.toString().getBytes(common.MessageDigestUtils.CHARSET), k);
+            for (int hash : hashes) {
+                bitMap.put(Math.abs(hash % bitSetSize), true);
+            }
+            numberOfAddedElements++;
+        }
+
+        if (bitSet instanceof RedisBitSet) {
+            RedisBitSet redisBitSet = (RedisBitSet) bitSet;
+            redisBitSet.pset(bitMap);
+        }
+    }
+
     /**
      * Adds all elements from a Collection to the Bloom filter.
      *
@@ -264,9 +285,25 @@ public class BloomFilter<E> implements Cloneable, Serializable {
      */
     public boolean contains(byte[] bytes) {
         int[] hashes = common.MessageDigestUtils.createHashes(bytes, k);
-        for (int hash : hashes) {
-            if (!bitSet.get(Math.abs(hash % bitSetSize))) {
-                return false;
+        if (bitSet instanceof RedisBitSet) {
+            RedisBitSet redisBitSet = (RedisBitSet) bitSet;
+            Pipeline pipeline = redisBitSet.getJedis().pipelined();
+            List<Response<Boolean>> responses = new ArrayList<Response<Boolean>>();
+            for (int hash : hashes) {
+                Response<Boolean> response = pipeline.getbit(redisBitSet.getName(), Math.abs(hash % bitSetSize));
+                responses.add(response);
+            }
+            pipeline.sync();
+            for (Response response : responses) {
+                if (!(Boolean) response.get()) {
+                    return false;
+                }
+            }
+        } else {
+            for (int hash : hashes) {
+                if (!bitSet.get(Math.abs(hash % bitSetSize))) {
+                    return false;
+                }
             }
         }
         return true;
