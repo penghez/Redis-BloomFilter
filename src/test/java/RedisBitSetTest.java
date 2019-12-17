@@ -20,7 +20,6 @@ public class RedisBitSetTest {
         myRedis = new MyRedis("34.74.169.35", 6379, "mypass");
         // myRedis = new MyRedis("127.0.0.1",6379,null);
         jedis = myRedis.jedis;
-
     }
 
     @Test
@@ -37,7 +36,7 @@ public class RedisBitSetTest {
             int counter = 0;
             while ((line = reader.readLine()) != null) {
                 list.add(line);
-                if ((counter ++) == 10000) { break; }
+                if ((counter ++) == 100000) { break; }
             }
             filter.addWithPipeline(list);
         } catch (Exception e) {
@@ -47,8 +46,8 @@ public class RedisBitSetTest {
         long startTime = System.nanoTime();
         System.out.println("Using bloomfilter:");
         System.out.println(filter.contains("With Schwarzkopf: Life Lessons of The Bear"));
-        System.out.println(filter.contains("Mosby's Oncology Nursing Advisor: A Comprehensive Guide to Clinical Practice, 1e"));
-        System.out.println(filter.contains("Employment Law In Ireland: A Guide in Plain English for Employers and Employees"));
+        // System.out.println(filter.contains("Mosby's Oncology Nursing Advisor: A Comprehensive Guide to Clinical Practice, 1e"));
+        // System.out.println(filter.contains("Employment Law In Ireland: A Guide in Plain English for Employers and Employees"));
         long endTime = System.nanoTime();
         System.out.println("Time used: " + (endTime - startTime) + "ns\n");
 
@@ -61,7 +60,7 @@ public class RedisBitSetTest {
             int counter = 0;
             while((line = reader.readLine()) != null){
                 pipeline.set(line, "true");
-                if ((counter ++) == 50000) { break; }
+                if ((counter ++) == 100000) { break; }
             }
             pipeline.sync();
         } catch (Exception e) {
@@ -71,11 +70,10 @@ public class RedisBitSetTest {
         startTime = System.nanoTime();
         System.out.println("Raw input:");
         System.out.println(jedis.get("With Schwarzkopf: Life Lessons of The Bear"));
-        System.out.println(jedis.get("Mosby's Oncology Nursing Advisor: A Comprehensive Guide to Clinical Practice, 1e"));
-        System.out.println(jedis.get("Employment Law In Ireland: A Guide in Plain English for Employers and Employees"));
+        // System.out.println(jedis.get("Mosby's Oncology Nursing Advisor: A Comprehensive Guide to Clinical Practice, 1e"));
+        // System.out.println(jedis.get("Employment Law In Ireland: A Guide in Plain English for Employers and Employees"));
         endTime = System.nanoTime();
         System.out.println("Time used: " + (endTime - startTime) + "ns");
-
     }
 
     @Test
