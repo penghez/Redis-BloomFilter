@@ -36,7 +36,7 @@ public class RedisBitSetTest {
             int counter = 0;
             while ((line = reader.readLine()) != null) {
                 list.add(line);
-                if ((counter ++) == 100000) { break; }
+                if ((counter ++) == 10000) { break; }
             }
             filter.addWithPipeline(list);
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class RedisBitSetTest {
             int counter = 0;
             while((line = reader.readLine()) != null){
                 pipeline.set(line, "true");
-                if ((counter ++) == 100000) { break; }
+                if ((counter ++) == 10000) { break; }
             }
             pipeline.sync();
         } catch (Exception e) {

@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="MyRedis" />
+        <module name="Redis-BloomFilter" />
       </profile>
     </annotationProcessing>
   </component>
