@@ -23,11 +23,11 @@ public class RedisBitSetTest {
 
     @Test
     public void redisTest(){
-        // use bloomfilter
         BloomFilter<String> filter;
-        for(int totalCaseNumber = 10000; totalCaseNumber <= 250000; totalCaseNumber += 10000) {
+        for (int totalCaseNumber = 10000; totalCaseNumber <= 250000; totalCaseNumber += 10000) {
+            // use bloomfilter
             filter = new BloomFilter<String>(8.0,totalCaseNumber,8);
-            int mod = totalCaseNumber /  100;
+            int mod = totalCaseNumber / 100;
             jedis.flushDB();
             filter.bind(new RedisBitSet(jedis, "bloomfilter:key:name"));
             filter.clear();
@@ -40,7 +40,7 @@ public class RedisBitSetTest {
                 while ((line = reader.readLine()) != null) {
                     list.add(line);
                     if ((counter ++) == totalCaseNumber) { break; }
-                    if (counter % mod== 0) {
+                    if (counter % mod == 0) {
                         testCases.add(line);
                     }
                 }

@@ -23,31 +23,42 @@ public class MyElasticsearchTest {
 
     @Test
     public void queryTest() {
-        long startTime = System.nanoTime();
-//        int counter = 0;
-//        int totalRecord = 100;
-//        try {
-//            BufferedReader reader;
-//            reader = new BufferedReader(new FileReader("./data/generated/data.csv"));
-//            String line = null;
-//            while ((line = reader.readLine()) != null) {
-//                SearchResponse searchResponse = client.prepareSearch("books")
-//                        .setQuery(QueryBuilders.matchQuery("title.keyword", line))
-//                        .get();
-//                if (counter++ == totalRecord) break;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        SearchResponse searchResponse = client.prepareSearch("books")
-                .setQuery(QueryBuilders.matchQuery("title.keyword", "With Schwarzkopf: Life Lessons of The Bear"))
-                .get();
-        long endTime = System.nanoTime();
+        for (int totalCaseNumber = 10000; totalCaseNumber <= 250000; totalCaseNumber += 10000) {
+            int mod = totalCaseNumber / 100;
+            List<String> testCases = new ArrayList<String>();
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader("./data/generated/data.csv"));
+                List<String> list = new ArrayList<String>();
+                String line = null;
+                int counter = 0;
+                while ((line = reader.readLine()) != null) {
+                    list.add(line);
+                    if ((counter ++) == totalCaseNumber) { break; }
+                    if (counter % mod == 0) {
+                        testCases.add(line);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            long startTime = System.nanoTime();
+            for (int i = 0; i < testCases.size(); i++) {
+                SearchResponse searchResponse = client.prepareSearch("books")
+                        .setQuery(QueryBuilders.matchQuery("title.keyword", testCases.get(i)))
+                        .get();
+            }
+            long endTime = System.nanoTime();
+            System.out.println("Number of testing records: " + Integer.toString(testCases.size()));
+            System.out.println("Time used: " + (endTime - startTime) + "ns");
+        }
+
+
 
 //        for (SearchHit searchHit : searchResponse.getHits()) {
 //            System.out.println(searchHit.getSourceAsString());
 //        }
 //        System.out.println("Number of testing records: " + Integer.toString(totalRecord));
-        System.out.println("Time used: " + (endTime - startTime) + "ns");
+
     }
 }
